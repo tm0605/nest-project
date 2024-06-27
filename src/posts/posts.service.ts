@@ -7,19 +7,19 @@ export class PostsService {
   constructor(private prisma: PrismaService) {}
 
   async findAllPost(): Promise<Post[]> {
-    return this.prisma.post.findMany();
+    return await this.prisma.post.findMany();
   }
 
   async findUniquePost(where: Prisma.PostWhereUniqueInput): Promise<Post> {
-    return this.prisma.post.findUniqueOrThrow({ where });
+    return await this.prisma.post.findUniqueOrThrow({ where });
   }
 
   async findUserPost(where: Prisma.PostWhereInput): Promise<Post[] | null> {
-    return this.prisma.post.findMany({ where });
+    return await this.prisma.post.findMany({ where });
   }
 
   async createPost(data: Prisma.PostCreateInput): Promise<Post> {
-    return this.prisma.post.create({ data });
+    return await this.prisma.post.create({ data });
   }
 
   async updatePost(params: {
@@ -27,10 +27,10 @@ export class PostsService {
     data: Prisma.PostUpdateInput;
   }): Promise<Post> {
     const { where, data } = params;
-    return this.prisma.post.update({ data, where });
+    return await this.prisma.post.update({ data, where });
   }
 
   async deletePost(where: Prisma.PostWhereUniqueInput): Promise<Post> {
-    return this.prisma.post.delete({ where });
+    return await this.prisma.post.delete({ where });
   }
 }

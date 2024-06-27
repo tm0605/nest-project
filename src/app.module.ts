@@ -3,15 +3,13 @@ import { logger } from './middleware/logger.middleware';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { PostsModule } from './posts/posts.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [UsersModule, PostsModule, ConfigModule.forRoot()],
-  // providers: [UsersService, PostsService, CommentsService, CategoriesService],
-  // controllers: [UsersController, PostsController, CommentsController, CategoriesController],
+  imports: [UsersModule, PostsModule, AuthModule, ConfigModule.forRoot()],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // consumer.apply(LoggerMiddleware).forRoutes(CatsController);
     consumer.apply(logger).forRoutes(UsersModule);
   }
 }

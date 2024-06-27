@@ -8,11 +8,11 @@ export class PostDto {
   id: string;
 
   @IsString()
-  @ApiProperty({ type: String, description: 'post title' })
+  @ApiProperty({ type: String })
   title: string;
 
   @IsString()
-  @ApiProperty({ type: String, description: 'post body' })
+  @ApiProperty({ type: String })
   body: string;
 
   @IsDateString()
@@ -36,11 +36,11 @@ export class PostDto {
 
 export class CreatePostDto {
   @IsString()
-  @ApiProperty({ type: String, description: 'post title' })
+  @ApiProperty({ type: String })
   title: string;
 
   @IsString()
-  @ApiProperty({ type: String, description: 'post body' })
+  @ApiProperty({ type: String })
   body: string;
 }
 

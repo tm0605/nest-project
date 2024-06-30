@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { CreatePostDto, PostDto, UpdatePostDto } from './dto/post.dto';
+import { CreatePostDto, PostResponseDto, UpdatePostDto } from './dto/post.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -17,14 +17,16 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { LikesService } from 'src/likes/likes.service';
 
 @ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
-  constructor(private postsService: PostsService) {}
+  constructor(
+    private postsService: PostsService,
+    private likesService: LikesService,
+  ) {}
 
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth()
   @Get()
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
@@ -49,7 +51,7 @@ export class PostsController {
   @Post('user/:userId')
   @ApiBody({ type: CreatePostDto })
   @ApiCreatedResponse({
-    type: PostDto,
+    type: PostResponseDto,
   })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
@@ -60,6 +62,16 @@ export class PostsController {
     return this.postsService.createPost({
       ...createPostDto,
       user: { connect: { id: userId } },
+    });
+  }
+
+  @Post(':id/user/:userId/like')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  async like(@Param('id') id: string, @Param('userId') userId: string) {
+    return this.likesService.like({
+      postWhere: { id },
+      userWhere: { id: userId },
     });
   }
 
@@ -76,5 +88,15 @@ export class PostsController {
   @ApiBearerAuth()
   remove(@Param('id') id: string) {
     return this.postsService.deletePost({ id });
+  }
+
+  @Delete(':id/user/:userId/like')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  async unlike(@Param('id') id: string, @Param('userId') userId: string) {
+    return this.likesService.removeLike({
+      postWhere: { id },
+      userWhere: { id: userId },
+    });
   }
 }

@@ -1,8 +1,8 @@
 import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsString } from 'class-validator';
+import { IsDateString, IsNumber, IsString } from 'class-validator';
 
-export class PostDto {
+export class PostResponseDto {
   @IsString()
   @ApiProperty({ type: String, description: 'id' })
   id: string;
@@ -17,15 +17,23 @@ export class PostDto {
 
   @IsDateString()
   @ApiProperty()
-  createdAt: string;
+  createdAt: Date;
 
   @ApiProperty()
   @IsDateString()
-  updatedAt: string;
+  updatedAt: Date;
 
   @ApiProperty()
   @IsString()
   userId: string;
+
+  @ApiProperty({ type: Number })
+  @IsNumber()
+  comments: number;
+
+  @ApiProperty({ type: Number })
+  @IsNumber()
+  likes: number;
 }
 // export class CreatePostDto extends OmitType(PostDto, [
 //   'id',

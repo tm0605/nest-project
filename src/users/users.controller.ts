@@ -18,7 +18,7 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard) // TODO: any way to apply all?
   @ApiBearerAuth()
   async findAll() {
     return this.usersService.findAllUser();
@@ -27,7 +27,7 @@ export class UsersController {
   @Get(':id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.usersService.findUniqueUser({ id });
   }
 
@@ -39,14 +39,14 @@ export class UsersController {
   @Put(':id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateUser({ where: { id }, data: updateUserDto });
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.usersService.deleteUser({ id });
   }
 }

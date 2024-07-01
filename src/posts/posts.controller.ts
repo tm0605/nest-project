@@ -9,7 +9,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { CreatePostDto, PostResponseDto, UpdatePostDto } from './dto/post.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -18,13 +17,14 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { LikesService } from 'src/likes/likes.service';
+import PostCreateDto from './dto/create.dto';
+import PostUpdateDto from './dto/update.dto';
 
 @ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
   constructor(
     private postsService: PostsService,
-    private likesService: LikesService,
   ) {}
 
   @Get()
@@ -48,55 +48,50 @@ export class PostsController {
     return this.postsService.findUniquePost({ id });
   }
 
-  @Post('user/:userId')
-  @ApiBody({ type: CreatePostDto })
-  @ApiCreatedResponse({
-    type: PostResponseDto,
-  })
+  @Post()
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async create(
     @Param('userId') userId: string,
-    @Body() createPostDto: CreatePostDto, // TODO: Remove userId param
+    @Body() createPostDto: PostCreateDto, // TODO: Remove userId param
   ) {
-    return this.postsService.createPost({
+    return this.postsService.create({
       ...createPostDto,
       user: { connect: { id: userId } },
     });
   }
 
-  @Post(':id/user/:userId/like')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
-  async like(@Param('id') id: string, @Param('userId') userId: string) {
-    return this.likesService.like({
-      postWhere: { id },
-      userWhere: { id: userId },
-    });
-  }
+  // @Post(':id/user/:userId/like')
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard)
+  // async like(@Param('id') id: string, @Param('userId') userId: string) {
+  //   return this.likesService.like({
+  //     postWhere: { id },
+  //     userWhere: { id: userId },
+  //   });
+  // }
 
   @Put(':id')
-  @ApiBody({ type: UpdatePostDto })
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.updatePost({ where: { id }, data: updatePostDto });
+  update(@Param('id') id: string, @Body() updatePostDto: PostUpdateDto) {
+    return this.postsService.update({ where: { id }, data: updatePostDto });
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   remove(@Param('id') id: string) {
-    return this.postsService.deletePost({ id });
+    return this.postsService.delete({ id });
   }
 
-  @Delete(':id/user/:userId/like')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
-  async unlike(@Param('id') id: string, @Param('userId') userId: string) {
-    return this.likesService.removeLike({
-      postWhere: { id },
-      userWhere: { id: userId },
-    });
-  }
+  // @Delete(':id/user/:userId/like')
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard)
+  // async unlike(@Param('id') id: string, @Param('userId') userId: string) {
+  //   return this.likesService.removeLike({
+  //     postWhere: { id },
+  //     userWhere: { id: userId },
+  //   });
+  // }
 }
